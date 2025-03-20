@@ -3100,7 +3100,7 @@ const urlTokenizer = new (class {
         this._hasQuery = 0;
         // https://www.reddit.com/r/uBlockOrigin/comments/dzw57l/
         //   Remember: 1 token needs two slots
-        this._tokens = new Uint32Array(2064);
+        this._tokens = new Uint32Array(8192);
 
         this.knownTokens = new Uint8Array(65536);
         this.resetKnownTokens();
@@ -5161,6 +5161,10 @@ StaticNetFilteringEngine.prototype.realmMatchString = function(
         const tokenHashes = urlTokenizer.getTokens(bidiTrie);
         let i = 0;
         for (;;) {
+            if ( i >= 8192 ) {
+                // To avoid infinite loop
+                break;
+            }
             tokenHash = tokenHashes[i];
             if ( tokenHash === INVALID_TOKEN_HASH ) { return false; }
             $tokenBeg = tokenHashes[i+1];
